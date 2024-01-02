@@ -26,8 +26,8 @@ app.listen(port, () =>
 ```
 # Add Controller
 ```
-Create a new Controller named 'WebhookController'
-Controller Location --- controller\WebhookController
+Create a new Controller named 'WebhookController.js'
+Controller Location --- controller\WebhookController.js
 You can now copy paste whole code from this project 'WebhookController.js'
 ```
 # bKash Requirement
