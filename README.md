@@ -1,7 +1,7 @@
 
 # bKash Webhook
 ```
-bKash Merchant user will notify instant payment notification from bKash through shared webhook endpoint.
+bKash merchant user will notify instant payment notification from bKash through shared webhook endpoint. bKash will notify subscription payload once but will notify payment payload after every successful transactions.Both payload format is text.
 ```
 # index.js Setup
 ```
@@ -9,7 +9,7 @@ require("dotenv").config()
 const express = require("express")
 const WebhookController = require('./controller/WebhookController')
 const app = express()
-const port = process.env.PORT ? process.env.PORT : 5000
+const port = process.env.PORT || 5000
 
 app.use(express.text())
 
@@ -36,4 +36,8 @@ You can now copy paste whole code from this project 'WebhookController.js'
 (2) Merchant wallet Number(s)
 (3) Notification channel email address
 (4) Webhook Endpoint
+```
+# Dependencies
+```
+axios & crypto
 ```
