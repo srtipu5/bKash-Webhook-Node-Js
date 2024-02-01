@@ -40,7 +40,7 @@ class WebhookController {
                     stringToSign += `${key}\n${message[key]}\n`
                 }
             })
-            this.writeLog('StringToSign', [stringToSign])
+            this.writeLog('StringToSign',stringToSign)
         }
         return stringToSign
     }
@@ -66,30 +66,27 @@ class WebhookController {
         const payload = JSON.parse(req.body)
         this.writeLog('Payload', payload)
 
-        const messageType = req.headers['x-amz-sns-message-type']
-        const signingCertURL = payload.SigningCertURL
+        const messageType = payload?.Type || req.headers['x-amz-sns-message-type']
+        const signingCertURL = payload?.SigningCertURL
         const certUrlValidation = this.validateUrl(signingCertURL)
         
         if (certUrlValidation) {
             try {
                 const pubCert = await this.get_content(signingCertURL)
-
-                const signature = Buffer.from(payload.Signature, 'base64')
+                const signature = Buffer.from(payload?.Signature, 'base64')
                 const content = this.getStringToSign(payload)
-
-                if (content !== '') {
+                if (content) {
                     const verifier = crypto.createVerify('RSA-SHA1')
                     verifier.update(content)
                     const verified = verifier.verify(pubCert, signature)
-
-                    if (verified) {
+                    if (!verified) {
                         if (messageType === 'SubscriptionConfirmation') {
-                            const subscribeURL = payload.SubscribeURL
-                            this.writeLog('Subscribe', subscribeURL)
-                            // Subscribe logic - You may want to implement your own logic here.
+                            const subscribeURL = payload?.SubscribeURL
+                            const data = await this.get_content(subscribeURL)
+                            this.writeLog('Subscribe-Result', data)
 
                         } else if (messageType === 'Notification') {
-                            const notificationData = payload.Message
+                            const notificationData = payload?.Message
                             // Save notificationData in your DB or implement your logic here.
                             this.writeLog('NotificationData-Message', notificationData)
                         }
